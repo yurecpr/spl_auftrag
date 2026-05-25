@@ -323,7 +323,14 @@ async function printAndSave() {
     if (pw) pw.onload = () => URL.revokeObjectURL(blobUrl);
     else setTimeout(() => URL.revokeObjectURL(blobUrl), 15000);
 
-    // 2) Save to Google Drive
+    // 2) Confirm print immediately → tablet resets without waiting for Drive
+    fetch(GAS_URL, {
+      method: 'POST', redirect: 'follow',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'confirmPrint' })
+    }).catch(() => {});
+
+    // 3) Save to Google Drive (parallel, non-blocking)
     const b64 = doc.output('datauristring').split(',')[1];
     let driveOk = false;
     try {
@@ -335,13 +342,6 @@ async function printAndSave() {
       const result = await res.json();
       driveOk = result.success === true;
     } catch(e) { console.warn('Drive save failed:', e); }
-
-    // 3) Confirm print → tablet will reset
-    await fetch(GAS_URL, {
-      method: 'POST', redirect: 'follow',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'confirmPrint' })
-    });
 
     msg.textContent = driveOk
       ? '✓ Gedruckt & in Google Drive gespeichert: ' + filename
