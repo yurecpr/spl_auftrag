@@ -1037,6 +1037,12 @@ async function syncDraft() {
     });
     const data = await res.json();
     setSyncStatus(true);
+    if (data.status === 'printed' && !_formPrinted) {
+      _formPrinted = true;
+      showStatus('✓ Auftrag wurde gedruckt. Vielen Dank!', 'success');
+      setTimeout(() => { clearFields(); _formPrinted = false; }, 4000);
+      return;
+    }
     if (data.orderNumber) {
       const el = document.getElementById('order-number');
       el.textContent = 'Auftrag-Nr.: ' + data.orderNumber;

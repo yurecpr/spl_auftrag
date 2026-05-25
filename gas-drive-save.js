@@ -55,7 +55,12 @@ function doPost(e) {
         delete fieldsOnly.signature;
         // Assign order number if not yet set for this draft
         const existing = sheet.getRange('A1:E1').getValues()[0];
-        let orderNumber = existing[4];
+        const prevStatus = existing[2] || 'empty';
+        // Don't overwrite if already printed – let tablet detect it
+        if (prevStatus === 'printed') {
+          return jsonResponse({ success: true, orderNumber: existing[4], status: 'printed' });
+        }
+        let orderNumber = (prevStatus === 'empty') ? null : existing[4];
         if (!orderNumber) {
           const props = PropertiesService.getScriptProperties();
           const counter = parseInt(props.getProperty('orderCounter') || '1000', 10) + 1;
