@@ -1079,7 +1079,7 @@ sigPad.addEventListener('endStroke', debounce(syncDraft, 1000));
 
 // Intervals
 setInterval(syncDraft,  3000);  // Sync alle 3 Sek
-setInterval(pollStatus, 3000);  // Status-Poll alle 3 Sek
+setInterval(pollStatus, 1500);  // Status-Poll alle 1.5 Sek (schneller erkennen)
 
 // Erster Sync nach 2 Sek
 setTimeout(syncDraft, 2000);
