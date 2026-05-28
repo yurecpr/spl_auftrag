@@ -930,10 +930,10 @@ function buildPDF() {
 
   // ---------- LEGAL ----------
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8);
+  doc.setFontSize(10);
   doc.text('Erklärung zur Auftragserteilung:', ML, y);
   doc.setFont('helvetica', 'normal');
-  y += 3.5;
+  y += 4.5;
 
   const legalRaw = [
     'Bitte sorgfältig durchlesen.',
@@ -948,22 +948,20 @@ function buildPDF() {
     'Ich versichere, dass die vorstehenden Angaben der Wahrheit entsprechen. Ich beauftrage die Fa. Speedlabor 24 UG (haftungsbeschränkt) mit der Fehlerdiagnose für das/die beiliegende/n Steuergerät/e.'
   ];
 
-  doc.setFontSize(7);
+  doc.setFontSize(9);
   doc.setTextColor(40);
   legalRaw.forEach(line => {
     const wrapped = doc.splitTextToSize(line, PW - ML - MR);
     doc.text(wrapped, ML, y);
-    y += wrapped.length * 3.2 + (line === '' ? 0 : 0.5);
+    y += wrapped.length * 4.0 + (line === '' ? 0 : 0.5);
   });
 
   doc.setTextColor(0);
   y += 5;
 
-  // ---------- SIGNATURE ----------
-  if (y > 252) { doc.addPage(); y = 18; }
-
-  const sigY   = y + 12;
-  const datW   = 42;
+  // ---------- SIGNATURE (fixed at bottom) ----------
+  const sigY   = PH - 22;
+  const datW   = 52;
   const sigX   = ML + datW + 14;
   const sigW   = PW - MR - sigX;
 
@@ -971,25 +969,25 @@ function buildPDF() {
   doc.setLineWidth(0.5);
   doc.setDrawColor(0);
   doc.line(ML, sigY, ML + datW, sigY);
-  doc.setFontSize(8);
+  doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(60);
-  doc.text('Datum', ML + datW / 2, sigY + 3.5, { align: 'center' });
-  doc.setFontSize(10.5);
+  doc.text('Datum', ML + datW / 2, sigY + 4.5, { align: 'center' });
+  doc.setFontSize(12);
   doc.setTextColor(0);
-  doc.text(val('f_datum'), ML + 2, sigY - 2);
+  doc.text(val('f_datum'), ML + 2, sigY - 3);
 
   // signature line
   doc.line(sigX, sigY, PW - MR, sigY);
-  doc.setFontSize(8);
+  doc.setFontSize(10);
   doc.setTextColor(60);
-  doc.text('Unterschrift / Firmenstempel', sigX + sigW / 2, sigY + 3.5, { align: 'center' });
+  doc.text('Unterschrift / Firmenstempel', sigX + sigW / 2, sigY + 4.5, { align: 'center' });
 
   // embed signature image
   if (!sigPad.isEmpty()) {
     const sigData = sigPad.toDataURL('image/png');
-    const imgH    = Math.min(24, sigY - y - 2);
-    doc.addImage(sigData, 'PNG', sigX, sigY - imgH - 1, sigW, imgH);
+    const imgH    = 20;
+    doc.addImage(sigData, 'PNG', sigX, sigY - imgH - 2, sigW, imgH);
   }
 
   return doc;
